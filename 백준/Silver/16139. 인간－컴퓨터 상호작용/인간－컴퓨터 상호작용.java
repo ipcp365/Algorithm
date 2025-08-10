@@ -1,38 +1,37 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
-/**
- * 문제읽기
- * 
- * 문자열 S 에서 특정 알파벳 a와 구간 [l, r] 이 주어졌을 때,
- * S의 l번째 문자열부터 r 번째 문자 사이에 a가 몇번 나타나는지 확인하기
- */
 public class Main {
-
-    public static void main(String[] args) throws IOException {
-        // 입출력 처리
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] s = br.readLine().split("");
-        int q = Integer.parseInt(br.readLine()); // 질문수
-        
-        while(q-- > 0) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            String ch = st.nextToken();
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            
-            int answer = 0;
-            for(int i=start; i<=end; i++) {
-            	if(s[i].equals(ch)) answer++;
+        StringBuilder sb = new StringBuilder();
+
+        String S = br.readLine();               // 소문자 알파벳 문자열
+        int n = S.length();
+
+        // pref[c][i] = S[0..i-1] 구간에서 문자 c('a'~'z')의 등장 횟수
+        int[][] pref = new int[26][n + 1];
+
+        // 전처리: i를 1..n로 돌리면 r+1, l을 그대로 쓰기 편함
+        for (int i = 1; i <= n; i++) {
+            int cur = S.charAt(i - 1) - 'a';
+            for (int c = 0; c < 26; c++) {
+                pref[c][i] = pref[c][i - 1];
             }
-            
-            System.out.println(answer);
-        	
+            pref[cur][i]++; // 현재 문자 카운트 증가
         }
 
-    
+        int q = Integer.parseInt(br.readLine());
+        while (q-- > 0) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int ch = st.nextToken().charAt(0) - 'a';
+            int l = Integer.parseInt(st.nextToken()); // 0-based
+            int r = Integer.parseInt(st.nextToken()); // 0-based
+
+            int ans = pref[ch][r + 1] - pref[ch][l];
+            sb.append(ans).append('\n');
+        }
+
+        System.out.print(sb);
     }
 }
