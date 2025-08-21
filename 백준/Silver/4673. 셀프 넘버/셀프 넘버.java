@@ -25,22 +25,19 @@ public class Main {
     	
     	// Simulation
     	for(int i=1; i<=10_000; i++) {
-    		// 초기화
-    		int result = 0;
+    		// n 더하기
+    		int result = i;
+    		int x = i;
     		
-    		// n값 더하기
-    		result = i;
-    		
-    		// n의 자리수 더하기
-    		String num = String.valueOf(i);
-    		for(int j=0; j<num.length(); j++) {
-    			result += num.charAt(j) -'0';
+    		// n 의 각 자리수 더하기
+    		while (x > 0) {
+    			result += x%10;
+    			x /= 10;
     		}
     		
-    		// 표시
-    		if(result > 10000) continue;
-    		
-    		nums[result] = true;
+    		// 최대값(10_000) 미만인 경우에만 사용(true) 표시
+    		if(result <= 10_000) nums[result] = true;
+ 
     	}
     	
     	// Result
