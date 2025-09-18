@@ -44,7 +44,7 @@ public class Main {
     	 for (int i = 0; i < N; i++) {
              for (int j = 0; j < M; j++) {
                  if (map[i][j] == L) {
-                     answer = Math.max(answer, bfs(i, j));
+                     answer = Math.max(answer, bfs(i, j, 0));
                  }
              }
          }
@@ -54,31 +54,44 @@ public class Main {
     	System.out.println(answer);
     }
     
-    static int bfs(int sx, int sy) {
-        // sx, sy는 반드시 L에서만 호출
-        int[][] dist = new int[N][M];
-        for (int i = 0; i < N; i++) Arrays.fill(dist[i], -1);
+    static class Node{
+    	int x;
+    	int y;
+    	int dist;
+    	
+    	Node(int x, int y, int dist){
+    		this.x = x;
+    		this.y = y;
+    		this.dist = dist;
+    	}
+    }
+    
+    static int bfs(int sx, int sy, int sd) {
+    	// 방문 처리 매번 초기화
+    	boolean[][] visited = new boolean[N][M];
 
-        Queue<int[]> q = new ArrayDeque<>();
-        q.add(new int[]{sx, sy});
-        dist[sx][sy] = 0;
+        Queue<Node> q = new ArrayDeque<>();
+        q.add(new Node(sx, sy, sd));
+        visited[sx][sy] = true;
 
         int far = 0; // 이 시작점에서의 최장 최단거리
 
         while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int x = cur[0], y = cur[1];
-            far = Math.max(far, dist[x][y]);
+            Node cur = q.poll();
+            int x = cur.x;
+            int y = cur.y;
+            far = Math.max(far, cur.dist);
 
             for (int dir = 0; dir < 4; dir++) {
                 int nx = x + dxs[dir];
                 int ny = y + dys[dir];
-                if (!inRange(nx, ny)) continue;
-                if (map[nx][ny] == W) continue;
-                if (dist[nx][ny] != -1) continue; // 이미 방문
+                
+                // 방문 불가
+                if(!inRange(nx, ny) || map[nx][ny] == W || visited[nx][ny]) continue;
 
-                dist[nx][ny] = dist[x][y] + 1;
-                q.add(new int[]{nx, ny});
+                // 방문
+                visited[nx][ny] = true;
+                q.add(new Node(nx, ny, cur.dist + 1));
             }
         }
         return far;
