@@ -45,51 +45,25 @@ class Solution {
     		}
 
 			score.put(select, score.get(select) + matching.get(choices[i]));
-			
-			//System.out.println("이번 위치 " + score.get(select));
     	}
     	
     	
     	// 결과 유형 선택하기
     	String answer = "";
+    	if(score.get('R') >= score.get('T')) answer += 'R';
+    	else answer += 'T';
     	
-    	if(score.get('R') > score.get('T')) {
-    		answer += 'R';
-    	}else if(score.get('R') < score.get('T')) {
-    		answer += 'T';
-    	}else {
-    		answer += 'R';
-    	}
+    	if(score.get('C') >= score.get('F')) answer += 'C';
+    	else answer += 'F';
     	
-    	if(score.get('C') > score.get('F')) {
-    		answer += 'C';
-    	}else if(score.get('C') < score.get('F')) {
-    		answer += 'F';
-    	}else {
-    		answer += 'C';
-    	}
+    	if(score.get('J') >= score.get('M')) answer += 'J';
+    	else answer += 'M';
     	
-    	System.out.println(score.get('J'));
-    	
-    	if(score.get('J') > score.get('M')) {
-    		answer += 'J';
-    	}else if(score.get('J') < score.get('M')) {
-    		answer += 'M';
-    	}else {
-    		answer += 'J';
-    	}
-
-    	if(score.get('A') > score.get('N')) {
-    		answer += 'A';
-    	}else if(score.get('A') < score.get('N')) {
-    		answer += 'N';
-    	}else {
-    		answer += 'A';
-    	}
-
-    	
+    	if(score.get('A') >= score.get('N'))answer += 'A';
+    	else answer += 'N';
+    
 		// Result
-		return answer;
-		//System.out.println(answer);
+	    return answer;
+		//	System.out.println(answer);
     }
 }
