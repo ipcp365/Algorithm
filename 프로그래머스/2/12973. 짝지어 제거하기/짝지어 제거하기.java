@@ -1,32 +1,24 @@
+import java.io.*;
 import java.util.*;
 
-class Solution {
+class Solution{
     public int solution(String s){
-
-        Stack<Character> stack = new Stack<>();
+        
+        Deque<Character> st = new ArrayDeque<>();
         
         for(int i=0; i<s.length(); i++){
-            char ch = s.charAt(i);
+            char c = s.charAt(i);
             
-            // 첫 번째 값일 경우 무조건 PUSH
-            if(i == 0){
-                stack.push(ch);
+            if(!st.isEmpty() && st.peekLast() == c){
+                // 둘이 같으면 제거
+                st.pollLast();
             }else{
-                // 두번째 값부터 비교
-                if(!stack.empty() && stack.peek() == ch){
-                    stack.pop();
-                }else{
-                    stack.push(ch);
-                }
+                // 둘이 다르면 추가
+                st.addLast(c);
             }
         }
-
         
-        if(stack.empty()){
-            return 1;
-        }else{
-            return 0;
-        }
-
+        // Result
+        return st.isEmpty() ? 1 : 0;
     }
 }
