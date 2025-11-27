@@ -1,12 +1,28 @@
+import java.io.*;
+import java.util.*;
+
+/**
+[문제읽기]
+- 카펫의 중앙은 노란색, 테두리 한줄은 갈색!
+- 가로, 세로의 크기를 return 하기
+*/
 class Solution {
     public int[] solution(int brown, int yellow) {
+        
         int total = brown + yellow;
-        int S = (brown + 4) / 2;           // w + h
-        int D = S * S - 4 * total;         // 판별식
-        int r = (int) Math.sqrt(D);        // √D (항상 정수 제곱이 되도록 입력이 주어짐)
-
-        int w = (S + r) / 2;
-        int h = (S - r) / 2;
-        return new int[]{w, h};
+        
+        // 규칙 : 노란색의 최소값은 1이므로, H의 최소값 또한 3이상이 된다는 의미
+        for(int H=3; H<=Math.sqrt(total); H++){
+            
+            if(total % H == 0){
+                int W = total / H;
+                
+                if((W-2) * (H-2) == yellow){
+                    return new int[]{W, H};
+                }
+            }
+        }
+        
+        return new int[0];
     }
 }
