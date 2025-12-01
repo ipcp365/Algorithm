@@ -1,82 +1,89 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 
 /**
- * 문제 정리하기
- * - N 개의 숫자, N-1 개의 연산자(+, -, *, / 총 4가지만 존재)
- * - 정수의 위치는 변경할 수 없으며, 각 수 사이에 연산자를 하나씩 넣어 수식을 만든다.
- * - "연산자의 우선순위는 무시" 하고, 수의 앞에서 부터 계산을 한다. ++ 나눗셈은 정수 나눗셈으로 몫만 취한다. ++
- * - 중복/동일한 연산은 안됨 !
- * - 출력 조건 : 최댓값, 최솟값을 출력해라.
+ * [문제 읽기]
+ * - N개의 수열과 N-1 개의 연산자(+, -, *, /)
+ * - 숫자의 순서는 변경할 수 없우며, 수식의 위치는 바꿀 수 있다.
+ * - 식의 결과가 최대인 것과 최소일 때의 값을 구하여라.
  */
-
 public class Main {
+
+	static int N, plus, minus, mul, div;
+	static long maxValue = Integer.MIN_VALUE;
+	static long minValue = Integer.MAX_VALUE;
+	static int[] nums;
 	
-	static int maxValue, minValue;
+	
+    public static void main(String[] args) throws IOException {
+    	// input
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	StringTokenizer st = new StringTokenizer(br.readLine());    	
+    	N = Integer.parseInt(st.nextToken());
+    	
+    	// 숫자 배열
+    	nums = new int[N];
+    	st = new StringTokenizer(br.readLine());
+    	for(int i=0; i<N; i++) {
+    		nums[i] = Integer.parseInt(st.nextToken());
+    	}
+    	
+    	// 연산자 : 덧셈 / 뺄셈 / 곱셈 / 나눗셈
+    	st = new StringTokenizer(br.readLine());
+    	plus = Integer.parseInt(st.nextToken());
+    	minus = Integer.parseInt(st.nextToken());
+    	mul = Integer.parseInt(st.nextToken());
+    	div = Integer.parseInt(st.nextToken());
+    	
 
-	public static void main(String[] args) throws Exception {
+    	// Simulation
+    	dfs(1, nums[0]);
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	
+    	// Result
+    	System.out.println(maxValue);
+    	System.out.println(minValue);
+    }
+
+
+    // dfs(현재 총 인원수, a팀, b팀?
+	private static void dfs(int numIdx, int values) {
 		
-		int N = Integer.parseInt(br.readLine());
-		maxValue = Integer.MIN_VALUE;
-		minValue = Integer.MAX_VALUE;
-
-		// 주어진 수 An
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		int[] num = new int[N];
-		for(int i=0; i<N; i++) {
-			num[i] = Integer.parseInt(st.nextToken());
+		// 종료 조건
+		if(numIdx == N) {
+			minValue = Math.min(minValue, values);
+			maxValue = Math.max(maxValue, values);
+			return;
 		}
 		
-		// 연산자의 순서는 고정 : +, -, *, /
-		st = new StringTokenizer(br.readLine());
-		int[] op = new int[4];  // 0: +, 1: -, 2: *, 3: /
-		for (int i = 0; i < 4; i++) {
-		    op[i] = Integer.parseInt(st.nextToken());
+		// 연산자 고르기
+		if(plus > 0) {
+			plus--;
+			dfs(numIdx + 1, values + nums[numIdx]);
+			plus++;
 		}
 		
-		dfs(1, num[0], num, op); // 첫 번째 숫자는 result에 넣고 시작
+		
+		if(minus > 0) {
+			minus--;
+			dfs(numIdx + 1, values - nums[numIdx]);
+			minus++;
+		}
+		
+		if(mul > 0) {
+			mul--;
+			dfs(numIdx + 1, values * nums[numIdx]);
+			mul++;
+		}
 
-		System.out.println(maxValue);
-		System.out.println(minValue);
+		
+		if(div > 0) {
+			div--;
+			dfs(numIdx + 1, values / nums[numIdx]);
+			div++;
+		}
 	}
 
-	private static void dfs(int idx, int result, int[] num, int[] op) {
-	    if (idx == num.length) {
-	        maxValue = Math.max(maxValue, result);
-	        minValue = Math.min(minValue, result);
-	        return;
-	    }
 
-	    for (int i = 0; i < 4; i++) {
-	    	// 사용할수 있는 연산자의 횟수도 정해져있기 때문에 op[i] 로 판단한다.
-	        if (op[i] > 0) {
-	            op[i]--;
-
-	            int next = 0;
-	            if (i == 0) next = result + num[idx];
-	            else if (i == 1) next = result - num[idx];
-	            else if (i == 2) next = result * num[idx];
-	            else next = result / num[idx]; // 정수 나눗셈
-
-	            dfs(idx + 1, next, num, op);
-	            op[i]++; // 원복
-	        }
-	    }
-	}
-	
 }
