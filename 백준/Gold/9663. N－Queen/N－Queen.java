@@ -1,57 +1,62 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
+
 
 public class Main {
+
+	static int N, answer;
 	
-    static int N;
-    static int[] arr;
+	static boolean[] colUsed; // 같은 열에 퀸
+	static boolean[] diag1; // 대각선 ↘ (row + col)
+	static boolean[] diag2; // 대각선 ↙ (row - col + N - 1)
+	
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        answer = 0;
+        colUsed = new boolean[N];
+        diag1 = new boolean[2 * N - 1];
+        diag2 = new boolean[2 * N - 1];
+        
+        // Simulation
+        dfs(0);
 
-    /**
-     * 문제 핵심: 퀸을 놓을 때 가로, 세로, 대각선에 퀸이 겹치지 않도록 배치해야 함
-     * 퀸은 한 줄에 하나만 놓을 수 있기 때문에, 한 행(row)마다 퀸을 배치하고
-     * 그 배치가 유효한지 체크하면서 다음 행으로 넘어가는 방식으로 해결 (백트래킹 사용)
-     */
-    
-    // Main 코드
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        N = sc.nextInt(); // N*N 격자 크기
-        arr = new int[N];
-        System.out.println(dfs(0));
+        // Result
+        System.out.println(answer);
     }
 
-    
-    /********** 함수 생성 **********/
+	private static void dfs(int row) {
+		
+		// 종료조건
+		if(row == N) {
+			answer++;
+			return;
+		}
+		
+		//점화식
+		for(int col=0; col<N; col++) {
+			// 조건 검사하기 : 중요한건 대각선상을 구할 때 N*N을 생각하지만 실제론 수학의 4분면 기준으로 봐야한다는 점
+			int d1 = row + col;
+			int d2 = row - col + (N - 1);
+			
+			if(colUsed[col] || diag1[d1] || diag2[d2]) continue;
+			
+			// 퀸
+			colUsed[col] = true;
+			diag1[d1] = true;
+			diag2[d2] = true;
+			
+			// 다음 행
+			dfs(row+1);
+			
+			colUsed[col] = false;
+		    diag1[d1] = false;
+		    diag2[d2] = false;
+		}
+		
+	}// ... dfs
 
-    // 백트래킹을 통해 N개의 퀸을 놓는 경우의 수 계산
-    public static int dfs(int row) {
-        
-        if(row == N) return 1;
-        
-        int ans = 0;
-        for(int i=0; i<N; i++){
-            arr[row] = i;
-            
-            if(isPossible(row)){
-                ans += dfs(row + 1);
-            }
-        }
-        
-        return ans;
-    }
     
-    
-    // 퀸을 놓았을 때 유효한 위치인지 확인하는 함수
-    // row: 현재 행에서 퀸을 놓은 위치
-    // 퀸을 표시하는게 아니라 제한 조건이 되는 위치에 퀸이 있는가 여부만 판단하는 역할을 한다.
-    public static boolean isPossible(int row) {
-        for(int i=0; i<row; i++){
-            if(arr[row] == arr[i]) return false;
-            
-            if(Math.abs(arr[row] - arr[i]) == row-i) return false;
-        }
-        
-        return true;
-    }
 
 }
