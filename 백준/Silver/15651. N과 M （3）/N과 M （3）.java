@@ -1,48 +1,44 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
+
 
 public class Main {
-	
 
-	private static int N, R;
-	private static int[] numbers;
-	
+	static int N, M;
+	static int[] arr;
 	static StringBuilder sb = new StringBuilder();
-
 	
-	public static void main(String[] args) throws IOException {
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		String[] arr = br.readLine().split(" ");
-		N = Integer.parseInt(arr[0]);
-		R = Integer.parseInt(arr[1]);
-		
-		numbers = new int[R];
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        arr = new int[M];
+        
+        // Simulation
+        dfs(0);
 
-		
-		dfs(0);
-		
-		System.out.println(sb);
-	}
-
+        // Result
+        System.out.println(sb.toString());
+    }
 
 	private static void dfs(int depth) {
-		
-		// 깊이가 R 과 같아질 경우 (종료조건)
-		if(depth == R) {
-			for(int i=0; i<R; i++) {
-				sb.append(numbers[i] +" ");
+		// 종료 조건
+		if(depth == M) {
+			for(int i=0; i<M; i++) {
+				sb.append(arr[i]).append(" ");
 			}
-			sb.append('\n');
+			sb.append("\n");
 			return;
 		}
 		
-		for(int i=1; i<=N; i++) {
-			numbers[depth] = i;
+		// 점화식
+		for(int i=0; i<N; i++) {
+			arr[depth] = i+1;
 			dfs(depth+1);
 		}
-		
-	}
+	}// ... dfs
+
+    
+
 }
