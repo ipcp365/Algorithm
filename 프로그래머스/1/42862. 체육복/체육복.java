@@ -1,55 +1,63 @@
 import java.io.*;
 import java.util.*;
 
-/**
-[문제 읽기]
-- 학생 체육복 도난 사건. 여벌 체육복이 있는 학생이 빌려주기로 함
-- 학생들 번호는 체격순서로 되어있어서 바로 앞번호 or 바로 뒷번호의 학생에게만 체육복을 빌려줄 수 있다.
-  ex) 4번 학생은 3,5번 학생에게만 빌려줄 수 있음
-- 체육복을 적절히 빌려 최대한 많은 학생이 체육 수업을 들어야 한다.
-  체육 수업을 들을 수 있는 학생의 최댓값을 return3
-
-- 단, 여별 체육복을 가져온 학생이 체육복을 도난당했을 수 도 있다. 이런 경우 다른 사람에게 체육복을 빌려줄 수 없다. ?
-*/
-import java.util.*;
-
+// 앞뒤로만 빌려주기 가능 + 여벌은 가지고 있으나 스스로 없을 수 있음
+// 체육수업을 들을 수 있는 학생의 최대값 구하기
 class Solution {
     public int solution(int n, int[] lost, int[] reserve) {
-        int answer = 0;
-
-        boolean[] isLost = new boolean[n + 1];
-        for (int num : lost) isLost[num] = true;
-
-        // 오름차순으로 주어진다는 보장이 없어서 정렬
+        // 0. 순차 정렬
         Arrays.sort(lost);
         Arrays.sort(reserve);
-
-        // 자가복구 하거나, 빌려줄 수 있는 학생임을  표시하기
-        boolean[] isReserve = new boolean[n + 1];
-        for (int num : reserve) {
-            if (isLost[num]) {
-                isLost[num] = false; // 자기 복구만
-            } else {
-                isReserve[num] = true; // 빌려줄 수 있는 학생만 따로 표시
+        
+        // 1. 잃어버린 사람, 여분을 가진 사람 각각 bool 타입 생성
+        boolean[] isLost = new boolean[n+1];
+        boolean[] isReserve = new boolean[n+1];
+        
+        for(int i=0; i<lost.length; i++) isLost[lost[i]] = true;
+        for(int i=0; i<reserve.length; i++) isReserve[reserve[i]] = true;
+        
+        // 2. 교집합 지우기 : 본인꺼 안챙기고 여벌만 챙긴 사람은 남에게 빌려줄 수 없음
+        int answer = n - lost.length;
+        
+        for(int i=0; i<lost.length; i++){
+            int cur = lost[i];
+            
+            if(isReserve[cur]){
+                isLost[cur] = false;
+                isReserve[cur] = false;
+                answer++;
             }
         }
-
-        // 빌려주기 로직 (앞 → 뒤)
-        for (int i = 1; i <= n; i++) {
-            if (isLost[i]) {
-                if (i - 1 >= 1 && isReserve[i - 1]) {
-                    isReserve[i - 1] = false;
-                    isLost[i] = false;
-                } else if (i + 1 <= n && isReserve[i + 1]) {
-                    isReserve[i + 1] = false;
-                    isLost[i] = false;
-                }
+        
+        // 3. Simulation
+        for(int i=0; i<lost.length; i++){
+            
+            // 앞 과정에서 필터링 된 사람은 jump
+            int cur = lost[i];
+            if(!isLost[cur]) continue;
+            
+            // 앞 번호에 여유가 있는 경우
+            if(cur-1 >= 1 && isReserve[cur-1]) {
+                System.out.println("앞사람꺼 뺏기");
+                isReserve[cur-1] = false;
+                isLost[cur] = false;
+                answer++;
+                continue;
             }
+    
+            // 뒷 사람한테서 빌릴 수 있는 경우
+            if(cur+1 <= n && isReserve[cur+1]) {
+                System.out.println("뒷사람꺼");
+                isReserve[cur+1] = false;
+                isLost[cur] = false;
+                answer++;
+                continue;
+            }
+            
         }
-
-        // 계산
-        for (int i = 1; i <= n; i++) if (!isLost[i]) answer++;
-
+        
+        
+        
         return answer;
     }
 }
